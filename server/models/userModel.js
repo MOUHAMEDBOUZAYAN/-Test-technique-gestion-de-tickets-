@@ -1,28 +1,40 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const pool = require('../config/database');
+const bcrypt = require('bcryptjs');
 
-const User = sequelize.define('User', {
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  role: {
-    type: DataTypes.ENUM('user', 'admin'),
-    defaultValue: 'user'
+class User {
+  static async create({ username, email, password }) {
+    const hashedPassword = await bcrypt.hash(password, 12);
+    
+    const query = `
+      INSERT INTO users (username, email, password, created_at, updated_at)
+      VALUES ($1, $2, $3, NOW(), NOW())
+      RETURNING id, username, email, created_at
+    `;
+    
+    const result = await pool.query(query, [username, email, hashedPassword]);
+    return result.rows[0];
   }
-}, {
-  tableName: 'users',
-  timestamps: false
-});
 
-module.exports = User; 
+  static async findByEmail(email) {
+    const query = 'SELECT * FROM users WHERE email = $1';
+    const result = await pool.query(query, [email]);
+    return result.rows[0];
+  }
+
+  static async findById(id) {
+    const query = 'SELECT id, username, email, created_at FROM users WHERE id = $1';
+    const result = await pool.query(query, [id]);
+    return result.rows[0];
+  }
+
+  static async validatePassword(plainPassword, hashedPassword) {
+    return await bcrypt.compare(plainPassword, hashedPassword);
+  }
+
+  static async updateLastLogin(id) {
+    const query = 'UPDATE users SET last_login = NOW() WHERE id = $1';
+    await pool.query(query, [id]);
+  }
+}
+
+module.exports = User;
