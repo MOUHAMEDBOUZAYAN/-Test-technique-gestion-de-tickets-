@@ -1,4 +1,4 @@
-const Ticket = require('../models/Ticket');
+const Ticket = require('../models/ticketModel');
 const { validateTicket, validateTicketUpdate } = require('../utils/validators');
 
 class TicketController {

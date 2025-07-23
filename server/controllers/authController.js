@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../models/userModel');
 const { generateToken } = require('../config/jwt');
 const { validateRegister, validateLogin } = require('../utils/validators');
 

@@ -4,9 +4,10 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-const authRoutes = require('./routes/auth');
-const ticketRoutes = require('./routes/tickets');
+const authRoutes = require('./routes/authRoutes');
+const ticketRoutes = require('./routes/ticketRoutes');
 const errorHandler = require('./middleware/errorHandler');
+const pool = require('./config/database');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -43,6 +44,10 @@ app.use(errorHandler);
 app.use('*', (req, res) => {
   res.status(404).json({ message: 'Route non trouvée' });
 });
+
+pool.query('SELECT 1')
+  .then(() => console.log('Connecté à la base de données PostgreSQL'))
+  .catch(err => console.error('Erreur de connexion à la base de données:', err));
 
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);
