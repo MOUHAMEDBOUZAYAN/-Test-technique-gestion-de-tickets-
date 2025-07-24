@@ -38,4 +38,4 @@ api.interceptors.response.use(
   }
 );
 
-export default API_URL;
+export default api;

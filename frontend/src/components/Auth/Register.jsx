@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { register: registerUser } = useAuth();
+  const { register: registerUserFromContext } = useAuth();
   
   const { 
     register, 
@@ -21,14 +21,16 @@ const Register = () => {
 
   const onSubmit = async (data) => {
     setLoading(true);
+    console.log("SUBMIT REGISTER DATA:", data);
     try {
-      await registerUser({
+      await registerUserFromContext({
         username: data.username,
         email: data.email,
         password: data.password
       });
       toast.success('Compte créé avec succès !');
     } catch (error) {
+      console.error("REGISTER ERROR:", error);
       toast.error(error.message || 'Erreur lors de la création du compte');
     } finally {
       setLoading(false);
