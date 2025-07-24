@@ -18,6 +18,7 @@ import { useTickets } from '../../hooks/useTickets';
 import TicketCard from './TicketCard';
 import TicketForm from './TicketForm';
 import Loading from '../Common/Loading';
+import TicketDetail from './TicketDetail';
 
 const TicketList = () => {
   // États pour les filtres et la recherche
@@ -34,6 +35,7 @@ const TicketList = () => {
   
   // États pour l'interface
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState(null);
 
   const { tickets, loading, createTicket, updateTicket, deleteTicket } = useTickets();
 
@@ -136,6 +138,10 @@ const TicketList = () => {
         console.error('Erreur lors de la suppression:', error);
       }
     }
+  };
+
+  const handleShowDetail = (ticket) => {
+    setSelectedTicket(ticket);
   };
 
   // Options de tri
@@ -426,13 +432,14 @@ const TicketList = () => {
               : 'space-y-4'
           }`}>
             {filteredAndSortedTickets.map((ticket) => (
-              <TicketCard
-                key={ticket.id}
-                ticket={ticket}
-                onEdit={handleEditTicket}
-                onDelete={handleDeleteTicket}
-                viewMode={viewMode}
-              />
+              <div key={ticket.id} onClick={() => handleShowDetail(ticket)} className="cursor-pointer">
+                <TicketCard
+                  ticket={ticket}
+                  onEdit={handleEditTicket}
+                  onDelete={handleDeleteTicket}
+                  viewMode={viewMode}
+                />
+              </div>
             ))}
           </div>
         )}
@@ -445,6 +452,10 @@ const TicketList = () => {
             onClose={handleCloseForm}
             loading={formLoading}
           />
+        )}
+
+        {selectedTicket && (
+          <TicketDetail ticket={selectedTicket} onClose={() => setSelectedTicket(null)} />
         )}
       </div>
     </div>
