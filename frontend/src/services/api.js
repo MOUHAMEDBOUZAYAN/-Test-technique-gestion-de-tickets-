@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Utilise la variable d'environnement Vite pour l'URL de l'API
+const API_URL = import.meta.env.VITE_API_URL;
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -37,4 +38,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default API_URL;
