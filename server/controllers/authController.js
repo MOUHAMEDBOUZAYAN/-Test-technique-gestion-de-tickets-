@@ -109,6 +109,10 @@ class AuthController {
       next(error);
     }
   }
+
+  static async health(req, res) {
+    res.status(200).json({ status: 'ok' });
+  }
 }
 
 module.exports = AuthController;

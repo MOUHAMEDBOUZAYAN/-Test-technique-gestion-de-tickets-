@@ -278,3 +278,65 @@ Pour toute question ou support, n'hésitez pas à :
 ---
 
 ⭐ N'oubliez pas de donner une étoile au projet si vous l'appréciez !
+
+## 🐳 Dockerisation & Déploiement
+
+### 1. Prérequis
+- Docker & Docker Compose installés
+
+### 2. Fichiers Docker
+- Chaque dossier (`frontend/`, `server/`) contient un `Dockerfile` optimisé pour la production.
+- Les fichiers `.env` doivent être créés dans `server/` et `frontend/` (voir exemples plus haut).
+
+### 3. Exemple de docker-compose.yml
+```yaml
+db:
+  image: postgres:15
+  restart: always
+  environment:
+    POSTGRES_DB: ticket_management
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+  ports:
+    - "5432:5432"
+  volumes:
+    - db_data:/var/lib/postgresql/data
+
+backend:
+  build: ./server
+  environment:
+    - DATABASE_URL=postgresql://postgres:postgres@db:5432/ticket_management
+    - JWT_SECRET=your_jwt_secret_key
+    - JWT_EXPIRES_IN=7d
+    - NODE_ENV=production
+    - PORT=5000
+  ports:
+    - "5000:5000"
+  depends_on:
+    - db
+
+frontend:
+  build: ./frontend
+  environment:
+    - VITE_API_URL=http://localhost:5000/api
+  ports:
+    - "3000:3000"
+  depends_on:
+    - backend
+
+volumes:
+  db_data:
+```
+
+### 4. Lancer l'application
+```bash
+docker-compose up --build
+```
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5000/api
+- PostgreSQL: localhost:5432
+
+### 5. Conseils
+- Adapter les variables d'environnement selon vos besoins.
+- Pour la production, utiliser des secrets sécurisés et des réseaux privés Docker.
+- Les migrations SQL doivent être lancées manuellement ou via un script d'init.

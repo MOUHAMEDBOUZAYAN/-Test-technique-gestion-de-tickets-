@@ -1,16 +1,15 @@
-FROM node:18-alpine
-
+# Stage 1: Build
+FROM node:18-alpine AS builder
 WORKDIR /app
-
-# Copier les fichiers de dépendances
 COPY package*.json ./
 RUN npm install
-
-# Copier le code source
 COPY . .
+RUN npm run build
 
-# Exposer le port
+# Stage 2: Serve
+FROM node:18-alpine AS runner
+WORKDIR /app
+RUN npm install -g serve
+COPY --from=builder /app/dist ./dist
 EXPOSE 3000
-
-# Démarrer l'application
-CMD ["npm", "run", "dev"]
+CMD ["serve", "-s", "dist", "-l", "3000"]
