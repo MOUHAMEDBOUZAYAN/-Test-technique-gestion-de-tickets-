@@ -153,13 +153,13 @@ priority_enum: 'low', 'medium', 'high', 'critical'
 
 ### 1. Cloner le repository
 ```bash
-git clone https://github.com/votre-username/ticket-management-app.git
-cd ticket-management-app
+git clone https://github.com/votre-username/-Test-technique-gestion-de-tickets-
+cd gestion de tickets
 ```
 
 ### 2. Configuration du Backend
 ```bash
-cd backend
+cd Server
 npm install
 
 # Copier et configurer les variables d'environnement
@@ -188,13 +188,12 @@ cp .env.example .env
 
 ### 5. Lancement de l'Application
 ```bash
-# Terminal 1 - Backend
-cd backend
-npm run dev
-
+# Terminal 1 - Server
+cd Server
+nodemon server
 # Terminal 2 - Frontend
 cd frontend
-npm start
+npm run dev
 ```
 
 L'application sera accessible sur `http://localhost:3000`
