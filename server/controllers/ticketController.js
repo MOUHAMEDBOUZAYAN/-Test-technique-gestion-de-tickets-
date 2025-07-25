@@ -13,7 +13,7 @@ class TicketController {
       }
 
       const { title, description, status, priority } = req.body;
-      const userId = req.user.userId; v
+      const userId = req.user.userId;
 
       const ticket = await Ticket.create({
         title,

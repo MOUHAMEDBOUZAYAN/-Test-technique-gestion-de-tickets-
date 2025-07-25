@@ -36,6 +36,7 @@ const TicketList = () => {
   // États pour l'interface
   const [showFilters, setShowFilters] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [ticketToDelete, setTicketToDelete] = useState(null);
 
   const { tickets, loading, createTicket, updateTicket, deleteTicket } = useTickets();
 
@@ -131,13 +132,23 @@ const TicketList = () => {
   };
 
   const handleDeleteTicket = async (id) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce ticket ?')) {
+    setTicketToDelete(id);
+  };
+
+  const confirmDeleteTicket = async () => {
+    if (ticketToDelete) {
       try {
-        await deleteTicket(id);
+        await deleteTicket(ticketToDelete);
       } catch (error) {
         console.error('Erreur lors de la suppression:', error);
+      } finally {
+        setTicketToDelete(null);
       }
     }
+  };
+
+  const cancelDeleteTicket = () => {
+    setTicketToDelete(null);
   };
 
   const handleShowDetail = (ticket) => {
@@ -456,6 +467,35 @@ const TicketList = () => {
 
         {selectedTicket && (
           <TicketDetail ticket={selectedTicket} onClose={() => setSelectedTicket(null)} />
+        )}
+        {ticketToDelete && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative animate-fade-in text-center">
+              <button
+                onClick={cancelDeleteTicket}
+                className="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-xl font-bold"
+                aria-label="Fermer"
+              >
+                ×
+              </button>
+              <h2 className="text-2xl font-bold text-red-600 mb-4">Supprimer le ticket ?</h2>
+              <p className="text-gray-700 mb-6">Êtes-vous sûr de vouloir supprimer ce ticket ? Cette action est irréversible.</p>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={confirmDeleteTicket}
+                  className="px-6 py-2 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition"
+                >
+                  Supprimer
+                </button>
+                <button
+                  onClick={cancelDeleteTicket}
+                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
