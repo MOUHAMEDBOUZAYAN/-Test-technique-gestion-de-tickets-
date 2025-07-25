@@ -19,12 +19,14 @@ import {
 import { useTickets } from '../../hooks/useTickets';
 import { useAuth } from '../../hooks/useAuth';
 import Loading from '../Common/Loading';
+import TicketDetail from '../Tickets/TicketDetail';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const { tickets, stats, loading } = useTickets();
   const navigate = useNavigate();
   const [selectedPeriod, setSelectedPeriod] = useState('7d');
+  const [selectedTicket, setSelectedTicket] = useState(null);
 
   if (loading) {
     return <Loading />;
@@ -299,6 +301,7 @@ const Dashboard = () => {
                         key={ticket.id} 
                         className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all duration-200 group cursor-pointer"
                         style={{ animationDelay: `${index * 100}ms` }}
+                        onClick={() => setSelectedTicket(ticket)}
                       >
                         <div className={`p-2 rounded-lg ${getPriorityColor(ticket.priority)} shadow-sm`}>
                           <AlertCircle className="h-4 w-4" />
@@ -364,6 +367,9 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+      {selectedTicket && (
+        <TicketDetail ticket={selectedTicket} onClose={() => setSelectedTicket(null)} />
+      )}
     </div>
   );
 };
